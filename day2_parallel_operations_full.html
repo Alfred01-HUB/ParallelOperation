@@ -1,0 +1,342 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.page { padding: 1rem 0; font-family: var(--font-sans); }
+
+.header { margin-bottom: 1.5rem; }
+.week-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #E1F5EE; color: #085041;
+  font-size: 11px; font-weight: 500; padding: 4px 10px;
+  border-radius: 20px; margin-bottom: 8px; letter-spacing: .04em;
+}
+.day-title { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+.day-sub { font-size: 14px; color: var(--color-text-secondary); margin-top: 4px; }
+
+.stats-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.stat { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: .75rem 1rem; }
+.stat-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
+.stat-val { font-size: 18px; font-weight: 500; color: var(--color-text-primary); }
+.stat-val.accent { color: #1D9E75; }
+
+.progress-bar { background: var(--color-background-secondary); border-radius: 4px; height: 4px; margin-bottom: .5rem; overflow: hidden; }
+.progress-fill { height: 100%; background: #1D9E75; border-radius: 4px; width: 0; transition: width 1.2s ease; }
+.progress-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 1.5rem; }
+
+.block-section { margin-bottom: 1.25rem; }
+.block-header {
+  display: grid; grid-template-columns: 72px 1fr auto;
+  align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: var(--border-radius-md); margin-bottom: 8px;
+}
+.block-time { font-size: 11px; font-weight: 500; }
+.block-name { font-size: 14px; font-weight: 500; }
+.block-tag { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; letter-spacing: .03em; white-space: nowrap; }
+
+.schedule-card {
+  display: grid; grid-template-columns: 3px 1fr;
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md); overflow: hidden; margin-bottom: 6px;
+}
+.sc-accent { width: 3px; }
+.sc-body { padding: 10px 14px; background: var(--color-background-primary); }
+.sc-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.sc-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.sc-pills { margin-top: 7px; display: flex; flex-wrap: wrap; gap: 5px; }
+.pill { font-size: 11px; padding: 3px 9px; border-radius: 20px; background: var(--color-background-secondary); color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
+
+.res-card {
+  display: grid; grid-template-columns: 3px 1fr;
+  border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary);
+  overflow: hidden; text-decoration: none; margin-bottom: 6px;
+  transition: border-color .15s;
+}
+.res-card:hover { border-color: var(--color-border-secondary); }
+.res-accent { width: 3px; }
+.res-body { padding: 9px 12px; background: var(--color-background-primary); }
+.res-top { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+.res-source { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 20px; }
+.res-type { font-size: 10px; color: var(--color-text-secondary); }
+.res-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+.res-desc { font-size: 11px; color: var(--color-text-secondary); line-height: 1.5; }
+.res-url { font-size: 10px; color: var(--color-text-info); margin-top: 4px; font-family: var(--font-mono); }
+
+.divider { height: 0.5px; background: var(--color-border-tertiary); margin: 1.25rem 0; }
+.section-label { font-size: 10px; font-weight: 500; letter-spacing: .06em; color: var(--color-text-secondary); margin-bottom: 8px; text-transform: uppercase; }
+
+.hdr-theory  { background: #EEEDFE; } .nm-theory  { color: #3C3489; } .tag-theory  { background: #EEEDFE; color: #3C3489; }
+.hdr-code    { background: #E1F5EE; } .nm-code    { color: #085041; } .tag-code    { background: #E1F5EE; color: #085041; }
+.hdr-break   { background: #F1EFE8; } .nm-break   { color: #444441; } .tag-break   { background: #F1EFE8; color: #444441; }
+.hdr-project { background: #FAEEDA; } .nm-project { color: #633806; } .tag-project { background: #FAEEDA; color: #633806; }
+.hdr-review  { background: #FAECE7; } .nm-review  { color: #712B13; } .tag-review  { background: #FAECE7; color: #712B13; }
+
+.acc-teal   { background: #1D9E75; } .acc-mdn  { background: #378ADD; }
+.acc-js     { background: #EF9F27; } .acc-node { background: #639922; }
+.acc-yt     { background: #E24B4A; } .acc-blog { background: #7F77DD; }
+.acc-book   { background: #D85A30; } .acc-ex   { background: #1D9E75; }
+
+.src-mdn  { background: #E6F1FB; color: #0C447C; }
+.src-js   { background: #FAEEDA; color: #633806; }
+.src-node { background: #EAF3DE; color: #27500A; }
+.src-yt   { background: #FCEBEB; color: #791F1F; }
+.src-blog { background: #EEEDFE; color: #3C3489; }
+.src-book { background: #FAECE7; color: #712B13; }
+.src-ex   { background: #E1F5EE; color: #085041; }
+
+@media (prefers-color-scheme: dark) {
+  .week-badge { background: #04342C; color: #9FE1CB; }
+  .hdr-theory  { background: #26215C; } .hdr-code    { background: #04342C; }
+  .hdr-break   { background: #2C2C2A; } .hdr-project { background: #412402; }
+  .hdr-review  { background: #4A1B0C; }
+  .nm-theory   { color: #CECBF6; } .nm-code    { color: #9FE1CB; }
+  .nm-break    { color: #D3D1C7; } .nm-project { color: #FAC775; }
+  .nm-review   { color: #F5C4B3; }
+  .tag-theory  { background: #26215C; color: #AFA9EC; }
+  .tag-code    { background: #04342C; color: #5DCAA5; }
+  .tag-break   { background: #2C2C2A; color: #B4B2A9; }
+  .tag-project { background: #412402; color: #EF9F27; }
+  .tag-review  { background: #4A1B0C; color: #F0997B; }
+  .src-mdn    { background: #042C53; color: #B5D4F4; }
+  .src-js     { background: #412402; color: #FAC775; }
+  .src-node   { background: #173404; color: #C0DD97; }
+  .src-yt     { background: #501313; color: #F7C1C1; }
+  .src-blog   { background: #26215C; color: #CECBF6; }
+  .src-book   { background: #4A1B0C; color: #F5C4B3; }
+  .src-ex     { background: #04342C; color: #9FE1CB; }
+}
+</style>
+
+<div class="page">
+
+  <div class="header">
+    <div class="week-badge">WEEK 1 · ASYNC MASTERY</div>
+    <div class="day-title">Day 2 — Parallel Operations</div>
+    <div class="day-sub">Tuesday · 7 focused blocks · ~7 hours of study</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-label">Study time</div><div class="stat-val accent">5h 30m</div></div>
+    <div class="stat"><div class="stat-label">Breaks</div><div class="stat-val">1h 30m</div></div>
+    <div class="stat"><div class="stat-label">Concepts</div><div class="stat-val accent">5</div></div>
+    <div class="stat"><div class="stat-label">Projects</div><div class="stat-val">1</div></div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  <div class="progress-label">Day 2 of 5 in Week 1</div>
+
+
+  <div class="block-section">
+    <div class="block-header hdr-theory">
+      <span class="block-time nm-theory">9:00–10:00</span>
+      <span class="block-name nm-theory">Sequential vs parallel — the mental model</span>
+      <span class="block-tag tag-theory">Theory</span>
+    </div>
+    <div class="section-label">Schedule</div>
+    <div class="schedule-card"><div class="sc-accent" style="background:#534AB7"></div><div class="sc-body">
+      <div class="sc-title">Build the core intuition</div>
+      <div class="sc-desc">Understand why running tasks one-after-another is wasteful when tasks don't depend on each other. Visualise the time savings of parallel execution.</div>
+      <div class="sc-pills"><span class="pill">Sequential timelines</span><span class="pill">Parallel timelines</span><span class="pill">I/O vs CPU work</span><span class="pill">When NOT to parallelise</span></div>
+    </div></div>
+    <div class="section-label" style="margin-top:12px">Resources</div>
+    <a class="res-card" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all" target="_blank">
+      <div class="res-accent acc-mdn"></div><div class="res-body">
+        <div class="res-top"><span class="res-source src-mdn">MDN</span><span class="res-type">Reference</span></div>
+        <div class="res-title">Promise.all() — MDN Web Docs</div>
+        <div class="res-desc">The primary parallel tool. Read the full page including the failure behaviour — a single rejection rejects the whole batch.</div>
+        <div class="res-url">developer.mozilla.org/.../Promise/all</div>
+      </div>
+    </a>
+    <a class="res-card" href="https://javascript.info/promise-api" target="_blank">
+      <div class="res-accent acc-js"></div><div class="res-body">
+        <div class="res-top"><span class="res-source src-js">javascript.info</span><span class="res-type">Tutorial</span></div>
+        <div class="res-title">Promise API — all 6 static methods in one place</div>
+        <div class="res-desc">Covers Promise.all, allSettled, race, any, resolve, reject side-by-side with clear examples. Best overview chapter for today.</div>
+        <div class="res-url">javascript.info/promise-api</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="block-section">
+    <div class="block-header hdr-code">
+      <span class="block-time nm-code">10:00–11:00</span>
+      <span class="block-name nm-code">Promise.all — run things in parallel</span>
+      <span class="block-tag tag-code">Coding</span>
+    </div>
+    <div class="section-label">Schedule</div>
+    <div class="schedule-card"><div class="sc-accent" style="background:#1D9E75"></div><div class="sc-body">
+      <div class="sc-title">Fetch multiple endpoints at once</div>
+      <div class="sc-desc">Use Promise.all with the Fetch API to hit 3–5 URLs simultaneously. Time it vs sequential await calls and log the difference.</div>
+      <div class="sc-pills"><span class="pill">Promise.all([...])</span><span class="pill">fetch() in parallel</span><span class="pill">timing with Date.now()</span><span class="pill">destructuring results</span></div>
+    </div></div>
+    <div class="section-label" style="margin-top:12px">Resources</div>
+    <a class="res-card" href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch" target="_blank">
+      <div class="res-accent acc-mdn"></div><div class="res-body">
+        <div class="res-top"><span class="res-source src-mdn">MDN</span><span class="res-type">Guide</span></div>
+        <div class="res-title">Using the Fetch API — MDN</div>
+        <div class="res-desc">The canonical guide for fetch(). You'll use this to fire off parallel HTTP requests — focus on the basic GET pattern and response.json().</div>
+        <div class="res-url">developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch</div>
+      </div>
+    </a>
+    <a class="res-card" href="https://jsonplaceholder.typicode.com" target="_blank">
+      <div class="res-accent acc-ex"></div><div class="res-body">
+        <div class="res-top"><span class="res-source src-ex">Practice API</span><span class="res-type">Free sandbox</span></div>
+        <div class="res-title">JSONPlaceholder — fake REST API for testing</div>
+        <div class="res-desc">Use /posts/1, /posts/2, /users/1 etc. as your parallel fetch targets — no auth, no rate limits. Perfect for this exercise.</div>
+        <div class="res-url">jsonplaceholder.typicode.com</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="block-section">
+    <div class="block-header hdr-theory">
+      <span class="block-time nm-theory">11:00–11:30</span>
+      <span class="block-name nm-theory">Promise.allSettled, race & any</span>
+      <span class="block-tag tag-theory">Theory</span>
+    </div>
+    <div class="section-label">Schedule</div>
+    <div class="schedule-card"><div class="sc-accent" style="background:#534AB7"></div><div class="sc-body">
+      <div class="sc-title">Learn when each variant applies</div>
+      <div class="sc-desc">Promise.all fails fast — but sometimes you want all results regardless of failure. Learn when to use allSettled vs race vs any.</div>
+      <div class="sc-pills"><span class="pill">allSettled — never throws</span><span class="pill">race — first wins</span><span class="pill">any — first success</span></div>
+    </div></div>
+    <div class="section-label" style="margin-top:12px">Resources</div>
+    <a class="res-card" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled" target="_blank">
+      <div class="res-accent acc-mdn"></div><div class="res-body">
+        <div class="res-top"><span class="res-source src-mdn">MDN</span><span class="res-type">Reference</span></div>
+        <div class="res-title">Promise.allSettled() — MDN</div>
+        <div class="res-desc">Returns a result object per promise ({status, value/reason}) rather than rejecting. The safe alternative to Promise.all for partial failures.</div>
+        <div class="res-url">developer.mozilla.org/.../Promise/allSettled</div>
+      </div>
+    </a>
+    <a class="res-card" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race" target="_blank">
+      <div class="res-accent acc-mdn"></div><div class="res-body">
+        <div class="res-top"><span class="res-source src-mdn">MDN</span><span class="res-type">Reference</span></div>
+        <div class="res-title">Promise.race() — MDN</div>
+        <div class="res-desc">Settles with whichever promise settles first — useful for timeouts. Pair with the Promise.any page for a complete picture.</div>
+        <div class="res-url">developer.mozilla.org/.../Promise/race</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="block-section">
+    <div class="block-header hdr-break">
+      <span class="block-time nm-break">11:30–12:30</span>
+      <span class="block-name nm-break">Lunch break</span>
+      <span class="block-tag tag-break">Break</span>
+    </div>
+    <div class="schedule-card"><div class="sc-accent" style="background:#888780"></div><div class="sc-body">
+      <div class="sc-title">Full break — no screens</div>
+      <div class="sc-desc">Let the sequential vs parallel mental model settle. Jot down one use case from real life where parallelism makes sense before you return.</div>
+    </div></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="block-section">
+    <div class="block-header hdr-code">
+      <span class="block-time nm-code">12:30–14:00</span>
+      <span class="block-name nm-code">Concurrency control — don't flood the server</span>
+      <span class="block-tag tag-code">Coding</span>
+    </div>
+    <div class="section-label">Schedule</div>
+    <div class="schedule-card"><div class="sc-accent" style="background:#1D9E75"></div><div class="sc-body">
+      <div class="sc-title">Batch & throttle parallel requests</div>
+      <div class="sc-desc">Running 100 requests at once is dangerous. Build a simple concurrency limiter that processes N tasks at a time using a chunk or queue approach.</div>
+      <div class="sc-pills"><span class="pill">Chunk arrays</span><span class="pill">Process N at a time</span><span class="pill">Queue with a pool</span><span class="pill">p-limit library</span></div>
+    </div></div>
+    <div class="section-label" style="margin-top:12px">Resources</div>
+    <a class="res-card" href="https://github.com/sindresorhus/p-limit" target="_blank">
+      <div class="res-accent acc-blog"></div><div class="res-body">
+        <div class="res-top"><span class="res-source src-blog">GitHub</span><span class="res-type">Library</span></div>
+        <div class="res-title">p-limit — run multiple promise-returning functions with limited concurrency</div>
+        <div class="res-desc">The de-facto concurrency limiter in the Node.js ecosystem. Study its API, then try building a simplified version yourself first.</div>
+        <div class="res-url">github.com/sindresorhus/p-limit</div>
+      </div>
+    </a>
+    <a class="res-card" href="https://sindresorhus.com/promise-fun" target="_blank">
+      <div class="res-accent acc-blog"></div><div class="res-body">
+        <div class="res-top"><span class="res-source src-blog">sindresorhus.com</span><span class="res-type">Reference list</span></div>
+        <div class="res-title">Promise fun — collection of async utility packages</div>
+        <div class="res-desc">Curated list of production-grade Promise utilities (p-map, p-queue, p-retry, etc.) by the same author. Bookmark for when you need these patterns in real projects.</div>
+        <div class="res-url">sindresorhus.com/promise-fun</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="block-section">
+    <div class="block-header hdr-project">
+      <span class="block-time nm-project">14:00–15:30</span>
+      <span class="block-name nm-project">Mini project — parallel API aggregator</span>
+      <span class="block-tag tag-project">Project</span>
+    </div>
+    <div class="section-label">Schedule</div>
+    <div class="schedule-card"><div class="sc-accent" style="background:#BA7517"></div><div class="sc-body">
+      <div class="sc-title">Build a real parallel data fetcher</div>
+      <div class="sc-desc">Fetch data from 3 different public APIs simultaneously, merge the results, and handle partial failures gracefully using allSettled. Log total time vs sequential baseline.</div>
+      <div class="sc-pills"><span class="pill">3 concurrent fetches</span><span class="pill">allSettled merge</span><span class="pill">error per-source</span><span class="pill">timing comparison</span></div>
+    </div></div>
+    <div class="section-label" style="margin-top:12px">Resources</div>
+    <a class="res-card" href="https://open-meteo.com/en/docs" target="_blank">
+      <div class="res-accent acc-ex"></div><div class="res-body">
+        <div class="res-top"><span class="res-source src-ex">Practice API</span><span class="res-type">Free — no auth</span></div>
+        <div class="res-title">Open-Meteo — free weather API</div>
+        <div class="res-desc">No API key needed. Fetch weather for 3 cities in parallel — great real-world parallel use case for your project.</div>
+        <div class="res-url">open-meteo.com/en/docs</div>
+      </div>
+    </a>
+    <a class="res-card" href="https://restcountries.com" target="_blank">
+      <div class="res-accent acc-ex"></div><div class="res-body">
+        <div class="res-top"><span class="res-source src-ex">Practice API</span><span class="res-type">Free — no auth</span></div>
+        <div class="res-title">REST Countries — country data API</div>
+        <div class="res-desc">Fetch multiple countries in parallel and merge their data. Combine with JSONPlaceholder or Open-Meteo for a multi-source aggregator.</div>
+        <div class="res-url">restcountries.com</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="block-section">
+    <div class="block-header hdr-review">
+      <span class="block-time nm-review">15:30–16:00</span>
+      <span class="block-name nm-review">Day wrap-up</span>
+      <span class="block-tag tag-review">Review</span>
+    </div>
+    <div class="section-label">Schedule</div>
+    <div class="schedule-card"><div class="sc-accent" style="background:#993C1D"></div><div class="sc-body">
+      <div class="sc-title">Consolidate & prep for Day 3</div>
+      <div class="sc-desc">Write a decision table in your notes: when to use all vs allSettled vs race vs any. Note one question about async/await to carry into tomorrow.</div>
+      <div class="sc-pills"><span class="pill">Decision table</span><span class="pill">Error patterns recap</span><span class="pill">Day 3 questions</span></div>
+    </div></div>
+    <div class="section-label" style="margin-top:12px">Resources</div>
+    <a class="res-card" href="https://www.youtube.com/watch?v=Xs1EMmBLpn4" target="_blank">
+      <div class="res-accent acc-yt"></div><div class="res-body">
+        <div class="res-top"><span class="res-source src-yt">YouTube</span><span class="res-type">Talk · 25 min</span></div>
+        <div class="res-title">JavaScript Promises — Fireship.io crash course</div>
+        <div class="res-desc">End-of-day recap video covering all the static methods you used today. Fast-paced but very clear — good for cementing the day's concepts.</div>
+        <div class="res-url">youtube.com/watch?v=Xs1EMmBLpn4</div>
+      </div>
+    </a>
+    <a class="res-card" href="https://exploringjs.com/impatient-js/ch_promises.html" target="_blank">
+      <div class="res-accent acc-book"></div><div class="res-body">
+        <div class="res-top"><span class="res-source src-book">Book (free online)</span><span class="res-type">Deep dive</span></div>
+        <div class="res-title">Promises — JavaScript for Impatient Programmers</div>
+        <div class="res-desc">Axel Rauschmayer's chapter doubles as a bridge into async/await (Day 3). Skim the tail end tonight to get a head start.</div>
+        <div class="res-url">exploringjs.com/impatient-js/ch_promises.html</div>
+      </div>
+    </a>
+  </div>
+
+</div>
+
+<script>
+  setTimeout(() => { document.getElementById('prog').style.width = '40%'; }, 300);
+</script>

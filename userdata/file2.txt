@@ -1,0 +1,4 @@
+[
+  {"id": 101, "title": "My first post"},
+  {"id": 102, "title": "Learning Node.js"}
+]
