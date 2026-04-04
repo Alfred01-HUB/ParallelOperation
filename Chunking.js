@@ -1,4 +1,4 @@
-async function runWithLimit(tasks, limit = 3) {
+async function runWithLimit(tasks, limit = 10) {
   const results = [];
   let index = 0;
 
@@ -26,7 +26,7 @@ async function runWithLimit(tasks, limit = 3) {
 }
 
 
-const tasks = Array.from({ length: 6 }, (_, i) => {
+const tasks = Array.from({ length: 10 }, (_, i) => {
   return async () => {
     console.log(`⏳ Start task ${i}`);
 
@@ -41,10 +41,11 @@ const tasks = Array.from({ length: 6 }, (_, i) => {
 (async () => {
   const start = Date.now();
 
-  const results = await runWithLimit(tasks, 2);
+  const results = await runWithLimit(tasks, 5);
 
   const end = Date.now();
 
   console.log("\nResults:", results);
   console.log("Total time:", end - start, "ms");
 })();
+
